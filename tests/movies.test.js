@@ -50,7 +50,6 @@ describe("POST /api/movies", () => {
       "SELECT * FROM movies WHERE id=?",
       response.body.id
     );
-    console.log(result);
     const [movieInDatabase] = result;
 
     expect(movieInDatabase).toHaveProperty("id");

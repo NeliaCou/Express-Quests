@@ -81,7 +81,7 @@ describe("POST /api/users", () => {
     const userWithMissingProps = {
       firstname: "Harry",
       lastname: "potter",
-      email: `${crypto.randomUUID()}@wild.co`,
+
       city: "London",
       language: "English",
     };
