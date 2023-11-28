@@ -88,7 +88,7 @@ const postUsers = (req, res) => {
     })
     .catch((err) => {
       console.error(err);
-      res.sendStatus(500);
+      res.status(400).send({ message: err.message });
     });
 };
 
