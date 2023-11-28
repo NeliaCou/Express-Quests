@@ -183,28 +183,47 @@ describe("PUT /api/users/:id", () => {
 
 describe("DELETE /api/user/:id", () => {
   it("should delete a user", async () => {
-    const addeduser = {
-      title: "Delete",
-      director: "this",
-      year: "2000",
-      color: true,
-      duration: 162,
+    const addedUser = {
+      firstname: "Ted",
+      lastname: "ddy",
+      email: `${crypto.randomUUID()}@wild.co`,
+      city: "Paris",
+      language: "France",
     };
 
-    const postResponse = await request(app).post("/api/users").send(addeduser);
+    const [result] = await database.query(
+      "INSERT INTO users(firstname, lastname, email, city, language) VALUES (?, ?, ?, ?, ?)",
+      [
+        addedUser.firstname,
+        addedUser.lastname,
+        addedUser.email,
+        addedUser.city,
+        addedUser.language,
+      ]
+    );
 
-    const userId = postResponse.body.id;
+    const id = result.insertId;
 
-    const deleteResponse = await request(app).delete(`/api/users/${userId}`);
-    expect(deleteResponse.status).toBe(204);
+    const response = await request(app).delete(`/api/users/${id}`);
+
+    expect(response.status).toEqual(204);
+
+    const [results] = await database.query(
+      "SELECT * FROM users WHERE id=?",
+      id
+    );
+
+    const [userInDatabase] = results;
+
+    expect(userInDatabase).toBeUndefined();
   });
 
   it("should return status 404 for non-existing user", async () => {
-    const nonExistinguserId = 999;
-    const deleteResponse = await request(app).delete(
-      `/api/users/${nonExistinguserId}`
+    const nonExistingUserId = 999;
+    const response = await request(app).delete(
+      `/api/users/${nonExistingUserId}`
     );
 
-    expect(deleteResponse.status).toBe(404);
+    expect(response.status).toEqual(404);
   });
 });

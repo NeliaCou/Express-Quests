@@ -183,22 +183,39 @@ describe("DELETE /api/movie/:id", () => {
       duration: 162,
     };
 
-    const postResponse = await request(app)
-      .post("/api/movies")
-      .send(addedMovie);
+    const [result] = await database.query(
+      "INSERT INTO movies(title, director, year, color, duration) VALUES (?, ?, ?, ?, ?)",
+      [
+        addedMovie.title,
+        addedMovie.director,
+        addedMovie.year,
+        addedMovie.color,
+        addedMovie.duration,
+      ]
+    );
 
-    const movieId = postResponse.body.id;
+    const id = result.insertId;
 
-    const deleteResponse = await request(app).delete(`/api/movies/${movieId}`);
-    expect(deleteResponse.status).toBe(204);
+    const response = await request(app).delete(`/api/movies/${id}`);
+
+    expect(response.status).toEqual(204);
+
+    const [results] = await database.query(
+      "SELECT * FROM movies WHERE id=?",
+      id
+    );
+
+    const [movieInDatabase] = results;
+
+    expect(movieInDatabase).toBeUndefined();
   });
 
   it("should return status 404 for non-existing movie", async () => {
     const nonExistingMovieId = 999;
-    const deleteResponse = await request(app).delete(
+    const response = await request(app).delete(
       `/api/movies/${nonExistingMovieId}`
     );
 
-    expect(deleteResponse.status).toBe(404);
+    expect(response.status).toEqual(404);
   });
 });
