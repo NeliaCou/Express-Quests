@@ -180,3 +180,31 @@ describe("PUT /api/users/:id", () => {
     expect(response.status).toEqual(404);
   });
 });
+
+describe("DELETE /api/user/:id", () => {
+  it("should delete a user", async () => {
+    const addeduser = {
+      title: "Delete",
+      director: "this",
+      year: "2000",
+      color: true,
+      duration: 162,
+    };
+
+    const postResponse = await request(app).post("/api/users").send(addeduser);
+
+    const userId = postResponse.body.id;
+
+    const deleteResponse = await request(app).delete(`/api/users/${userId}`);
+    expect(deleteResponse.status).toBe(204);
+  });
+
+  it("should return status 404 for non-existing user", async () => {
+    const nonExistinguserId = 999;
+    const deleteResponse = await request(app).delete(
+      `/api/users/${nonExistinguserId}`
+    );
+
+    expect(deleteResponse.status).toBe(404);
+  });
+});

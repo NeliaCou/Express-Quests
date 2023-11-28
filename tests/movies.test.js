@@ -172,3 +172,33 @@ describe("PUT /api/movies/:id", () => {
     expect(response.status).toEqual(404);
   });
 });
+
+describe("DELETE /api/movie/:id", () => {
+  it("should delete a movie", async () => {
+    const addedMovie = {
+      title: "Delete",
+      director: "this",
+      year: "2000",
+      color: true,
+      duration: 162,
+    };
+
+    const postResponse = await request(app)
+      .post("/api/movies")
+      .send(addedMovie);
+
+    const movieId = postResponse.body.id;
+
+    const deleteResponse = await request(app).delete(`/api/movies/${movieId}`);
+    expect(deleteResponse.status).toBe(204);
+  });
+
+  it("should return status 404 for non-existing movie", async () => {
+    const nonExistingMovieId = 999;
+    const deleteResponse = await request(app).delete(
+      `/api/movies/${nonExistingMovieId}`
+    );
+
+    expect(deleteResponse.status).toBe(404);
+  });
+});
