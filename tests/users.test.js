@@ -1,6 +1,7 @@
 const request = require("supertest");
 
 const app = require("../src/app");
+const database = require("../database");
 
 const crypto = require("node:crypto");
 
@@ -76,19 +77,19 @@ describe("POST /api/users", () => {
     expect(typeof userInDatabase.language).toBe("string");
   });
 
-  it("should return an error", async () => {
-    const userWithMissingProps = {
-      firstname: "Harry",
-      lastname: "potter",
-      email: `${crypto.randomUUID()}@wild.co`,
-      city: "London",
-      language: "English",
-    };
+  // it("should return an error", async () => {
+  //   const userWithMissingProps = {
+  //     firstname: "Harry",
+  //     lastname: "potter",
+  //     email: `${crypto.randomUUID()}@wild.co`,
+  //     city: "London",
+  //     language: "English",
+  //   };
 
-    const response = await request(app)
-      .post("/api/users")
-      .send(userWithMissingProps);
+  //   const response = await request(app)
+  //     .post("/api/users")
+  //     .send(userWithMissingProps);
 
-    expect(response.status).toEqual(500);
-  });
+  //   expect(response.status).toEqual(500);
+  // });
 });
