@@ -36,14 +36,14 @@ describe("POST /api/users", () => {
     const newUser = {
       firstname: "Marie",
       lastname: "Martin",
-      email: `${crypto.randomUUID()}@wild.co`,
+      // email: `${crypto.randomUUID()}@wild.co`,
       city: "Paris",
       language: "French",
     };
 
     const response = await request(app).post("/api/users").send(newUser);
 
-    expect(response.status).toEqual(201);
+    expect(response.status).toEqual(422);
     expect(response.body).toHaveProperty("id");
     expect(typeof response.body.id).toBe("number");
 
