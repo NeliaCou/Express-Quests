@@ -50,8 +50,7 @@ const getMovies = (req, res) => {
       res.json(movies); // use res.json instead of console.log
     })
     .catch((err) => {
-      console.error(err);
-      res.status(500).send("Error retrieving data from database");
+      res.status(500).send("Error retrieving data from database", err.message);
     });
 };
 
@@ -68,8 +67,7 @@ const getMovieById = (req, res) => {
       }
     })
     .catch((err) => {
-      console.error(err);
-      res.sendStatus(500);
+      res.status(500).send({ message: err.message });
     });
 };
 
@@ -85,7 +83,6 @@ const postMovie = (req, res) => {
       res.status(201).send({ id: result.insertId });
     })
     .catch((err) => {
-      console.error(err);
       res.status(400).send({ message: err.message });
     });
 };
@@ -124,8 +121,7 @@ const deleteMovie = (req, res) => {
       }
     })
     .catch((err) => {
-      console.error(err);
-      res.sendStatus(500);
+      res.status(500).send({ message: err.message });
     });
 };
 
