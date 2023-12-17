@@ -1,57 +1,15 @@
-const movies = [
-  {
-    id: 1,
-    title: "Citizen Kane",
-    director: "Orson Wells",
-    year: "1941",
-    color: false,
-    duration: 120,
-  },
-  {
-    id: 2,
-    title: "The Godfather",
-    director: "Francis Ford Coppola",
-    year: "1972",
-    color: true,
-    duration: 180,
-  },
-  {
-    id: 3,
-    title: "Pulp Fiction",
-    director: "Quentin Tarantino",
-    year: "1994",
-    color: true,
-    duration: 180,
-  },
-];
-
 const database = require("../../database");
+const MovieManager = require("../managers/movieManager");
 
-const getMovies = (req, res) => {
-  let sql = "SELECT * from movies";
-  const sqlValues = [];
+const getMovies = async (req, res) => {
+  const movieManager = new MovieManager();
 
-  if (req.query.color != null) {
-    sql += " WHERE color = ?";
-    sqlValues.push(req.query.color);
+  try {
+    const movies = await movieManager.getAll(req);
+    res.json(movies);
+  } catch (err) {
+    res.status(500).send("Error retrieving data from database", err.message);
   }
-
-  if (req.query.max_duration != null) {
-    sql += " AND duration <= ?";
-    sqlValues.push(req.query.max_duration);
-  } else if (req.query.max_duration != null) {
-    sql += " WHERE duration <= ?";
-    sqlValues.push(req.query.max_duration);
-  }
-
-  database
-    .query(sql, sqlValues)
-    .then(([movies]) => {
-      res.json(movies); // use res.json instead of console.log
-    })
-    .catch((err) => {
-      res.status(500).send("Error retrieving data from database", err.message);
-    });
 };
 
 const getMovieById = (req, res) => {
@@ -60,10 +18,10 @@ const getMovieById = (req, res) => {
   database
     .query("select * from movies where id = ?", [id])
     .then(([movies]) => {
-      if (movies[0] != null) {
-        res.json(movies[0]);
-      } else {
+      if (movies.length === 0) {
         res.sendStatus(404);
+      } else {
+        res.json(movies[0]);
       }
     })
     .catch((err) => {
